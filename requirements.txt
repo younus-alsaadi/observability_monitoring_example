@@ -1,0 +1,5 @@
+# requirements.txt
+flask
+prometheus-client
+fastapi
+uvicorn[standard]
