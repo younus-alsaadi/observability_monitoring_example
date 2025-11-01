@@ -1,0 +1,93 @@
+# This is a Prometheus Recording Rules file.
+# It pre-calculates your SLIs so they are fast to query in Grafana.
+
+groups:
+  # ---
+  # Group 1: Rules for the "/" endpoint
+  # ---
+  - name: home-endpoint-rules
+    rules:
+    # ---
+    # SLI: Latency (percent of requests < 0.5 seconds)
+    # ---
+    - record: "slo:sli:ratio_rate5m"
+      expr: |-
+        sum(rate(http_request_duration_seconds_bucket{endpoint="/", le="0.5"}[5m]))
+        /
+        sum(rate(http_request_duration_seconds_count{endpoint="/"}[5m]))
+      labels:
+        slo_id: home-request-latency
+        feature: home
+    - record: "slo:sli:ratio_rate30m"
+      expr: |-
+        sum(rate(http_request_duration_seconds_bucket{endpoint="/", le="0.5"}[30m]))
+        /
+        sum(rate(http_request_duration_seconds_count{endpoint="/"}[30m]))
+      labels:
+        slo_id: home-request-latency
+        feature: home
+
+    # ---
+    # SLI: Availability (percent of requests that are not 5xx errors)
+    # ---
+    - record: "slo:sli:ratio_rate5m"
+      expr: |-
+        sum(rate(http_requests_total{endpoint="/", status_code!~"5.."}[5m]))
+        /
+        sum(rate(http_requests_total{endpoint="/"}[5m]))
+      labels:
+        slo_id: home-request-availability
+        feature: home
+    - record: "slo:sli:ratio_rate30m"
+      expr: |-
+        sum(rate(http_requests_total{endpoint="/", status_code!~"5.."}[30m]))
+        /
+        sum(rate(http_requests_total{endpoint="/"}[30m]))
+      labels:
+        slo_id: home-request-availability
+        feature: home
+
+  # ---
+  # Group 2: Rules for the "/error" endpoint
+  # ---
+  - name: error-endpoint-rules
+    rules:
+    # ---
+    # SLI: Latency (percent of requests < 0.5 seconds)
+    # ---
+    - record: "slo:sli:ratio_rate5m"
+      expr: |-
+        sum(rate(http_request_duration_seconds_bucket{endpoint="/error", le="0.5"}[5m]))
+        /
+        sum(rate(http_request_duration_seconds_count{endpoint="/error"}[5m]))
+      labels:
+        slo_id: error-request-latency
+        feature: error
+    - record: "slo:sli:ratio_rate30m"
+      expr: |-
+        sum(rate(http_request_duration_seconds_bucket{endpoint="/error", le="0.5"}[30m]))
+        /
+        sum(rate(http_request_duration_seconds_count{endpoint="/error"}[30m]))
+      labels:
+        slo_id: error-request-latency
+        feature: error
+
+    # ---
+    # SLI: Availability (percent of requests that are not 5xx errors)
+    # ---
+    - record: "slo:sli:ratio_rate5m"
+      expr: |-
+        sum(rate(http_requests_total{endpoint="/error", status_code!~"5.."}[5m]))
+        /
+        sum(rate(http_requests_total{endpoint="/error"}[5m]))
+      labels:
+        slo_id: error-request-availability
+        feature: error
+    - record: "slo:sli:ratio_rate30m"
+      expr: |-
+        sum(rate(http_requests_total{endpoint="/error", status_code!~"5.."}[30m]))
+        /
+        sum(rate(http_requests_total{endpoint="/error"}[30m]))
+      labels:
+        slo_id: error-request-availability
+        feature: error

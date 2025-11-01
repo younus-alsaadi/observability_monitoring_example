@@ -2,6 +2,9 @@
 global:
   scrape_interval: 15s # How often to scrape targets
 
+rule_files:
+  - /etc/prometheus/rules.yml
+
 scrape_configs:
   # This job scrapes Prometheus itself
   - job_name: 'prometheus'
@@ -9,9 +12,10 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   # THIS IS THE JOB FOR OUR PYTHON APP
-  - job_name: 'python-app'
+  - job_name: 'observability_monitoring_example'
     static_configs:
       # We'll run our Flask app on port 5000
       # 'host.docker.internal' is a special name that lets the
       # Docker container find services running on your computer
       - targets: ['host.docker.internal:5020']
+
